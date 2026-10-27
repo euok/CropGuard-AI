@@ -33,7 +33,6 @@ from database_concurrency import (
 # --- SETUP & CONFIGURATION ---
 st.set_page_config(
     page_title="CropGuard AI",
-    page_icon="🌱",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -86,49 +85,16 @@ if not google_user.get("is_logged_in", False):
             pointer-events: none;
             background: #121212;
         }
-        .cg-login-backdrop-slide {
+        .cg-login-backdrop-image {
             position: absolute;
             inset: -3%;
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            opacity: 0;
-            animation: cg-climate-slideshow 20s ease-in-out infinite;
-            will-change: opacity, transform;
-        }
-        .cg-login-backdrop-slide:nth-child(1) {
+            opacity: 1;
             background-image:
                 linear-gradient(135deg, rgba(13, 31, 20, 0.88), rgba(10, 15, 12, 0.98)),
                 url("https://images.unsplash.com/photo-1592982537447-7440770cbfc9?auto=format&fit=crop&w=2400&q=85");
-        }
-        .cg-login-backdrop-slide:nth-child(2) {
-            background-image:
-                linear-gradient(135deg, rgba(13, 31, 20, 0.88), rgba(10, 15, 12, 0.98)),
-                url("https://images.unsplash.com/photo-1589923188900-85dae523342b?auto=format&fit=crop&w=2400&q=85");
-            animation-delay: -15s;
-        }
-        .cg-login-backdrop-slide:nth-child(3) {
-            background-image:
-                linear-gradient(135deg, rgba(13, 31, 20, 0.88), rgba(10, 15, 12, 0.98)),
-                url("https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=2400&q=85");
-            animation-delay: -10s;
-        }
-        .cg-login-backdrop-slide:nth-child(4) {
-            background-image:
-                linear-gradient(135deg, rgba(13, 31, 20, 0.88), rgba(10, 15, 12, 0.98)),
-                url("https://images.unsplash.com/photo-1605000797499-95a51c5269ae?auto=format&fit=crop&w=2400&q=85");
-            animation-delay: -5s;
-        }
-        @keyframes cg-climate-slideshow {
-            0% { opacity: 0; transform: scale(1.08); }
-            5% { opacity: 1; }
-            25% { opacity: 1; transform: scale(1.02); }
-            30% { opacity: 0; transform: scale(1); }
-            100% { opacity: 0; transform: scale(1); }
-        }
-        @keyframes cg-float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); box-shadow: 0 25px 45px rgba(118, 255, 3, 0.2); }
         }
         .st-key-cg-login-card {
             position: relative;
@@ -181,7 +147,7 @@ if not google_user.get("is_logged_in", False):
             font-size: .96rem;
             line-height: 1.65;
         }
-        .cg-floating-prompt {
+        .cg-login-prompt {
             display: flex;
             align-items: center;
             gap: .85rem;
@@ -189,34 +155,26 @@ if not google_user.get("is_logged_in", False):
             margin: .5rem auto 1.5rem;
             padding: 12px 24px;
             border: 1px solid rgba(190, 225, 196, .2);
-            border-bottom: 2px solid #76FF03;
-            border-radius: 50px;
-            background: rgba(10, 25, 15, 0.6);
-            box-shadow: 0 15px 35px rgba(118, 255, 3, 0.15);
+            border-radius: 12px;
+            background: rgba(10, 25, 15, 0.72);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
             backdrop-filter: blur(14px);
             -webkit-backdrop-filter: blur(14px);
             text-align: left;
-            animation: cg-float 4s ease-in-out infinite;
         }
-        .cg-floating-prompt .prompt-icon {
-            flex: 0 0 auto;
-            color: #c7ff9f !important;
-            font-size: 1.2rem;
-            filter: drop-shadow(0 0 8px rgba(118, 255, 3, .7));
-        }
-        .cg-floating-prompt .prompt-text {
+        .cg-login-prompt .prompt-text {
             flex: 1 1 auto;
             min-width: 0;
             color: #d4e5d7 !important;
             font-size: .95rem;
         }
-        .cg-floating-prompt .prompt-btn {
+        .cg-login-prompt .prompt-btn {
             flex: 0 0 auto;
             padding: .55rem .9rem;
-            border: 1px solid rgba(118, 255, 3, .3);
-            border-radius: 999px;
-            background: rgba(118, 255, 3, .12);
-            color: #c7ff9f !important;
+            border: 1px solid rgba(190, 225, 196, .28);
+            border-radius: 8px;
+            background: rgba(190, 225, 196, .1);
+            color: #d4e5d7 !important;
             font-size: .84rem;
             font-weight: 700;
             white-space: nowrap;
@@ -236,7 +194,6 @@ if not google_user.get("is_logged_in", False):
             font-size: 1rem !important;
             font-weight: 600 !important;
             text-shadow: none !important;
-            transition: box-shadow .18s ease, background-color .18s ease, transform .18s ease;
         }
         .st-key-cg-google-login button::before {
             content: "";
@@ -250,8 +207,7 @@ if not google_user.get("is_logged_in", False):
         }
         .st-key-cg-google-login button:hover {
             background: #f8faff !important;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, .28) !important;
-            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, .22) !important;
         }
         .st-key-cg-google-login button p {
             color: #303134 !important;
@@ -281,16 +237,6 @@ if not google_user.get("is_logged_in", False):
         .cg-impact-ticker strong {
             color: #a5f28a !important;
         }
-        .cg-live-dot {
-            display: inline-flex;
-            flex: 0 0 auto;
-            animation: cg-live-pulse 1.8s ease-in-out infinite;
-            transform-origin: center;
-        }
-        @keyframes cg-live-pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: .58; transform: scale(.82); }
-        }
         @media (max-width: 680px) {
             [data-testid="stMainBlockContainer"] {
                 padding: 1rem .75rem;
@@ -299,14 +245,14 @@ if not google_user.get("is_logged_in", False):
                 padding: 1.5rem 1.1rem;
                 border-radius: 18px;
             }
-            .cg-floating-prompt {
+            .cg-login-prompt {
                 gap: .55rem;
                 padding: 10px 14px;
             }
-            .cg-floating-prompt .prompt-text {
+            .cg-login-prompt .prompt-text {
                 font-size: .82rem;
             }
-            .cg-floating-prompt .prompt-btn {
+            .cg-login-prompt .prompt-btn {
                 padding: .5rem .65rem;
                 font-size: .72rem;
             }
@@ -316,20 +262,6 @@ if not google_user.get("is_logged_in", False):
                 font-size: .84rem;
             }
         }
-        @media (prefers-reduced-motion: reduce) {
-            .cg-login-backdrop-slide,
-            .cg-floating-prompt,
-            .cg-live-dot {
-                animation: none;
-            }
-            .cg-login-backdrop-slide:first-child {
-                opacity: 1;
-                transform: none;
-            }
-            .st-key-cg-google-login button {
-                transition: none;
-            }
-        }
         </style>
         """,
         unsafe_allow_html=True,
@@ -337,39 +269,35 @@ if not google_user.get("is_logged_in", False):
     st.markdown(
         """
         <div class="cg-login-backdrop" aria-hidden="true">
-          <div class="cg-login-backdrop-slide"></div>
-          <div class="cg-login-backdrop-slide"></div>
-          <div class="cg-login-backdrop-slide"></div>
-          <div class="cg-login-backdrop-slide"></div>
+          <div class="cg-login-backdrop-image"></div>
         </div>
         """,
         unsafe_allow_html=True,
     )
     with st.container(key="cg-login-card"):
         st.markdown(
-            '<div class="cg-coop-badge">🤝 A Farmer-Owned Digital Cooperative</div>',
+            '<div class="cg-coop-badge">Farmer-Owned Digital Cooperative</div>',
             unsafe_allow_html=True,
         )
-        st.markdown("# 🌱 CropGuard AI")
+        st.markdown("# CropGuard AI")
         st.markdown(
-            '<p class="cg-login-subtitle">Scaling Innovations for Climate-Smart Food Systems.</p>'
-            '<p class="cg-login-description">Empowering grassroots farmers with instant AI diagnostics, '
-            'local agro-vet networks, and bio-security early warnings.</p>',
+            '<p class="cg-login-subtitle">Crop Health Screening and Regional Surveillance</p>'
+            '<p class="cg-login-description">Supporting agricultural agencies and producers with crop screening, '
+            'regional surveillance, and extension resources.</p>',
             unsafe_allow_html=True,
         )
         st.markdown(
             """
-            <div class="cg-floating-prompt">
-              <span class="prompt-icon">✨</span>
-              <span class="prompt-text">Describe a crop issue or upload a leaf scan...</span>
-              <span class="prompt-btn">Ask the Cooperative ↵</span>
+            <div class="cg-login-prompt">
+              <span class="prompt-text">Input crop symptoms or upload a scan for analysis...</span>
+              <span class="prompt-btn">Submit Query</span>
             </div>
             """,
             unsafe_allow_html=True,
         )
         st.markdown(
             '<p class="cg-login-subtitle" style="font-size:.95rem;margin-bottom:1rem">'
-            "Join the digital cooperative. Sign in to access your secure farm hub.</p>",
+            "Sign in to access your farm dashboard and scan history.</p>",
             unsafe_allow_html=True,
         )
         if _google_oidc_is_configured():
@@ -387,15 +315,13 @@ if not google_user.get("is_logged_in", False):
             )
         st.markdown(
             '<div class="cg-impact-ticker" role="status">'
-            '<span class="cg-live-dot" aria-hidden="true">🟢</span>'
-            '<span><strong>Live Cooperative:</strong> 5,403 Farmers Sharing Data · '
-            '142 Active Threats Mitigated</span>'
+            '<span><strong>Network status:</strong> 5,403 registered farmers · '
+            '142 active regional alerts</span>'
             '</div>',
             unsafe_allow_html=True,
         )
         st.markdown(
-            '<p class="cg-login-footer">CropGuard AI • Protecting crops, securing yields, '
-            'and scaling climate-smart food systems for farmers everywhere.</p>',
+            '<p class="cg-login-footer">CropGuard AI · Crop health screening, surveillance, and extension resources.</p>',
             unsafe_allow_html=True,
         )
     st.stop()
@@ -426,39 +352,39 @@ def _require_authenticated_user_id():
 # --- EXHAUSTIVE MULTILINGUAL TRANSLATION DICTIONARY ---
 TRANSLATIONS = {
     "English": {
-        "nav_diag": "🌱 Diagnostic & Advisory Hub",
-        "nav_map": "🗺️ B2G Epidemiological Heatmap Dashboard",
-        "nav_ai": "🤖 Agritech Virtual AI Assistant",
-        "nav_forum": "💬 Regional Farmer Community Forum",
-        "nav_acc": "🔐 Farmer Account & History Portal",
-        "settings": "⚙️ Settings / Configuration",
-        "nav_header": "🧭 Platform Navigation",
+        "nav_diag": "Diagnostic & Advisory Hub",
+        "nav_map": "B2G Epidemiological Heatmap Dashboard",
+        "nav_ai": "Agritech Virtual AI Assistant",
+        "nav_forum": "Regional Farmer Community Forum",
+        "nav_acc": "Farmer Account & History Portal",
+        "settings": "Settings / Configuration",
+        "nav_header": "Platform Navigation",
         "select_portal": "Select Portal View",
         "select_hub_label": "Select Farm Town / Region Worldwide",
         "select_lang_label": "Choose Language / Langue / Idioma",
-        "climate_header": "🌦️ Micro-Climate Risk Advisory",
-        "b2g_header": "🏛️ Ministry & Bio-Security Portal",
+        "climate_header": "Micro-Climate Risk Advisory",
+        "b2g_header": "Ministry & Bio-Security Portal",
         "about_header": "About CropGuard AI",
-        "about_text": "Empowering farmers and agricultural ministries worldwide with instant AI-driven crop diagnostics, syndromic outbreak surveillance, and dynamic extension support.",
+        "about_text": "Provides farmers and agricultural agencies with crop-image screening, regional outbreak surveillance, and extension-service information.",
         "active_vectors": "Total Active Tracked Vectors:",
         "no_telemetry_sidebar": "No regional cluster telemetry logged yet in current session.",
         "outbreak_warning": "Outbreak Alert",
-        "reg_early_warning": "🚨 Regional Outbreak Early-Warning",
+        "reg_early_warning": "Regional Outbreak Early-Warning",
         "phytosanitary_feed": "National Epidemiological Surveillance Feed",
-        "gps_btn_label": "📍 Auto-Detect GPS",
-        "acc_title": "🔐 Farmer Account & Secure Farm History",
+        "gps_btn_label": "Auto-Detect GPS",
+        "acc_title": "Farmer Account & Secure Farm History",
         "acc_subtitle": "Manage your Google OAuth account and review your complete, persistent agronomic scan history.",
-        "profile_header": "👤 Active Account Profile",
-        "login_prompt": "🔐 Please sign in with your Google account to access and track your persistent farm history across sessions.",
-        "login_btn": "🔗 Sign In with Google",
-        "logout_btn": "🚪 Log Out",
-        "history_header": "📋 Persistent Farm Scan History",
+        "profile_header": "Active Account Profile",
+        "login_prompt": "Please sign in with your Google account to access and track your persistent farm history across sessions.",
+        "login_btn": "Sign In with Google",
+        "logout_btn": "Log Out",
+        "history_header": "Persistent Farm Scan History",
         "history_info": "All field scans and disease severity scores performed under your account are securely preserved here across sessions.",
-        "timeline_header": "📈 Infection Severity Timeline Analysis",
-        "auth_success": "Successfully authenticated as",
+        "timeline_header": "Infection Severity Timeline Analysis",
+        "auth_success": "Authenticated as",
         "email_lbl": "Email:",
         "user_id_lbl": "User Account ID:",
-        "no_history_msg": "No scan history logged yet for this account. Run a scan in the Diagnostic Hub!",
+        "no_history_msg": "No scan history is available for this account.",
         "col_time": "Timestamp",
         "col_hub": "Hub Region",
         "col_crop": "Crop",
@@ -466,28 +392,28 @@ TRANSLATIONS = {
         "col_conf": "Confidence (%)",
         "col_stage": "Severity Stage",
         "col_sev_pct": "Severity (%)",
-        "map_title": "🗺️ National & Global Epidemiological Heatmap",
+        "map_title": "National & Global Epidemiological Heatmap",
         "map_subtitle": "B2G Bio-Security Surveillance & Disease Prevalence Mapping",
-        "map_cluster_header": "📊 Live Phytosanitary Outbreak Clusters",
+        "map_cluster_header": "Live Phytosanitary Outbreak Clusters",
         "filter_crop": "Filter Heatmap by Crop Category:",
         "all_crops_opt": "All Crops",
-        "sev_key_title": "🗺️ Outbreak Severity Key:",
-        "sev_1": "🟢 Stage 1: Mild (<40% visual discoloration)",
-        "sev_2": "🟠 Stage 2: Moderate (40% - 70% visual discoloration)",
-        "sev_3": "🔴 Stage 3: High (>70% visual discoloration)",
+        "sev_key_title": "Outbreak Severity Key:",
+        "sev_1": "Stage 1: Mild (<40% visual discoloration)",
+        "sev_2": "Stage 2: Moderate (40% - 70% visual discoloration)",
+        "sev_3": "Stage 3: High (>70% visual discoloration)",
         "sev_note": "* Circle size scales with infection severity",
-        "audit_header": "📑 Telemetry Surveillance Audit Trail",
+        "audit_header": "Telemetry Surveillance Audit Trail",
         "no_map_data": "No regional scan telemetry has been recorded yet in this session.",
         "no_crop_match": "No recorded telemetry matches the selected crop filter.",
-        "ai_title": "🤖 CropGuard AI — Virtual Expert Assistant",
-        "ai_subtitle": "Real-Time Agronomic Advisory & Pathology Consultation",
-        "chat_header": "💬 Interactive Agritech Chat Desk",
-        "chat_info": "Ask any question regarding crop diseases, soil health, fungicide dosage, or pest management. Calibrated for {hub} in {lang}.",
-        "chat_welcome": "Hello {user}! I am your CropGuard AI virtual agronomist assistant. How can I help you optimize crop health or manage plant pathology in {hub} today?",
-        "chat_input_ph": "Ask about crop diseases, pest mitigation, or agronomic advice...",
-        "forum_title": "💬 Regional Farmer Community Forum",
-        "forum_subtitle": "Connect, Share & Collaborate with Nearby Farmers in",
-        "broadcast_header": "✍️ Broadcast to Local Farmers",
+        "ai_title": "CropGuard AI — Agronomic Decision Support",
+        "ai_subtitle": "Crop Screening Guidance and Pathology Reference",
+        "chat_header": "Agronomic Query Interface",
+        "chat_info": "Submit crop health, pest, soil, or treatment queries. Responses are contextualized for {hub} and {lang}.",
+        "chat_welcome": "System ready. Awaiting diagnostic query from {user}. Regional context: {hub}.",
+        "chat_input_ph": "Input crop symptoms or upload a scan for analysis...",
+        "forum_title": "Regional Farmer Community Forum",
+        "forum_subtitle": "Regional farmer information exchange:",
+        "broadcast_header": "Publish to Local Farmers",
         "tag_label": "Topic Tag:",
         "msg_label": "Share an update, ask a question, or warn neighbors...",
         "forum_media_label": "Add a picture or video (optional)",
@@ -496,26 +422,26 @@ TRANSLATIONS = {
         "forum_media_invalid": "This file could not be read as a supported image. Choose a valid JPG, PNG, or WebP image.",
         "forum_post_empty": "Add a message or attach a picture/video before sharing.",
         "forum_media_name": "Attachment",
-        "share_btn": "📢 Share with Community",
-        "feed_header": "📰 Live Community Feed",
-        "post_posted_msg": "Your message has been posted to the regional hub feed!",
+        "share_btn": "Share with Community",
+        "feed_header": "Live Community Feed",
+        "post_posted_msg": "Your message was published to the regional hub feed.",
         "post_empty_msg": "Please type a message before submitting.",
-        "no_posts_msg": "No community posts yet in {hub}. Be the first farmer to share an update!",
-        "diag_title": "🌱 CropGuard AI",
-        "diag_subtitle": "Advanced Computer Vision Agritech Assistant (Global Edition)",
+        "no_posts_msg": "No community posts are available for {hub}.",
+        "diag_title": "CropGuard AI",
+        "diag_subtitle": "Crop Image Screening and Agronomic Reference (Global Edition)",
         "tour_btn": "Replay guided tour",
         "crop_select_prompt": "Select Target Crop Type (Hub Priority):",
-        "crop_select_header": "🌾 Select Crop Context",
-        "upload_header": "📥 1.",
+        "crop_select_header": "Select Crop Context",
+        "upload_header": "1.",
         "upload_label_text": "Upload or snap an image of an affected crop leaf...",
         "quality_integrity_header": "Quality & integrity checks",
         "leaf_upload_help": "Use a clear, well-lit photo of one affected leaf.",
         "image_open_error": "Could not open or assess this image: {error}",
-        "scan_another_btn": "🔄 Scan Another Leaf",
-        "analyze_btn": "Run Diagnostic Analysis",
+        "scan_another_btn": "Process New Sample",
+        "analyze_btn": "Execute Diagnostic Scan",
         "results_header": "Diagnostic Results",
         "treatment_header": "Agritech Management & Regional Resource Directory",
-        "hub_support_header": "📍 Hub Support & Extension Directory",
+        "hub_support_header": "Hub Support & Extension Directory",
         "analysis_complete_msg": "Image analysis complete.",
         "crop_context_lbl": "Target Crop Context:",
         "pattern_match_lbl": "Primary Pattern Match:",
@@ -536,43 +462,43 @@ TRANSLATIONS = {
         "quality_metrics": "Quality check: {width}×{height}px · sharpness {sharpness:.1f} · brightness {brightness:.0f}/255 · contrast {contrast:.1f}.",
         "quality_confidence_caution": "Image-quality checks are heuristic, not a trained quality model. The model score is uncalibrated and is not a probability of a correct diagnosis.",
         "hub_support_info": "Regional resources are selected automatically using your GPS-matched hub when location access is available; otherwise, the currently selected region is used.",
-        "diagnostic_empty_prompt": "👈 Select your region, pick your crop context, upload an image on the left, and click Run Diagnostic Analysis to view insights here.",
+        "diagnostic_empty_prompt": "Select your region and crop, upload an image, then execute a diagnostic scan to view results here.",
         "footer_text": "CropGuard AI — National Phytosanitary Surveillance & Global Agronomic Network"
     },
     "Kiswahili": {
-        "nav_diag": "🌱 Vituo vya Uchunguzi na Ushauri",
-        "nav_map": "🗺️ Ramani ya Magonjwa na Mlipuko (B2G)",
-        "nav_ai": "🤖 Msaidizi wa AI wa Kilimo",
-        "nav_forum": "💬 Jukwaa la Jamii ya Wakulima",
-        "nav_acc": "🔐 Akaunti ya Mkulima na Kumbukumbu",
-        "settings": "⚙️ Mipangilio / Udhibiti",
-        "nav_header": "🧭 Uelekezaji wa Mfumo",
+        "nav_diag": "Vituo vya Uchunguzi na Ushauri",
+        "nav_map": "Ramani ya Magonjwa na Mlipuko (B2G)",
+        "nav_ai": "Msaidizi wa AI wa Kilimo",
+        "nav_forum": "Jukwaa la Jamii ya Wakulima",
+        "nav_acc": "Akaunti ya Mkulima na Kumbukumbu",
+        "settings": "Mipangilio / Udhibiti",
+        "nav_header": "Uelekezaji wa Mfumo",
         "select_portal": "Chagua Eneo la Tovuti",
         "select_hub_label": "Chagua Mji wa Kilimo Duniani",
         "select_lang_label": "Chagua Lugha",
-        "climate_header": "🌦️ Hali ya Hewa na Hatari ya Magonjwa",
-        "b2g_header": "🏛️ Wizara ya Kilimo & Usalama wa Biorasilimali",
+        "climate_header": "Hali ya Hewa na Hatari ya Magonjwa",
+        "b2g_header": "Wizara ya Kilimo & Usalama wa Biorasilimali",
         "about_header": "Kuhusu CropGuard AI",
-        "about_text": "Kuwawezesha wakulima na wizara za kilimo duniani kote kwa uchunguzi wa haraka wa mimea unaoendeshwa na AI, ufuatiliaji wa milipuko, na ushauri wa kitaalamu.",
+        "about_text": "Huwapa wakulima na taasisi za kilimo huduma za uchunguzi wa picha za mazao, ufuatiliaji wa milipuko ya magonjwa na taarifa za huduma za ugani.",
         "active_vectors": "Jumla ya Magonjwa Inayofuatiliwa:",
         "no_telemetry_sidebar": "Hakuna takwimu za ufuatiliaji zilizorekodiwa katika kipindi hiki.",
         "outbreak_warning": "Tahadhari ya Mlipuko",
-        "reg_early_warning": "🚨 Tahadhari ya Mapema ya Mlipuko wa Kanda",
+        "reg_early_warning": "Tahadhari ya Mapema ya Mlipuko wa Kanda",
         "phytosanitary_feed": "Mtiririko wa Kitaifa wa Ufuatiliaji wa Magonjwa",
-        "gps_btn_label": "📍 Tafuta GPS",
-        "acc_title": "🔐 Akaunti ya Mkulima & Historia Salama ya Shamba",
+        "gps_btn_label": "Tafuta GPS",
+        "acc_title": "Akaunti ya Mkulima & Historia Salama ya Shamba",
         "acc_subtitle": "Dhibiti akaunti yako ya Google OAuth na ukague historia yako kamili ya uchunguzi wa shamba.",
-        "profile_header": "👤 Profaili ya Akaunti",
-        "login_prompt": "🔐 Tafadhali ingia ukitumia akaunti yako ya Google ili kufikia na kufuatilia historia ya shamba lako.",
-        "login_btn": "🔗 Ingia na Google",
-        "logout_btn": "🚪 Toka Nje",
-        "history_header": "📋 Historia ya Uchunguzi wa Shamba",
+        "profile_header": "Profaili ya Akaunti",
+        "login_prompt": "Tafadhali ingia ukitumia akaunti yako ya Google ili kufikia na kufuatilia historia ya shamba lako.",
+        "login_btn": "Ingia na Google",
+        "logout_btn": "Toka Nje",
+        "history_header": "Historia ya Uchunguzi wa Shamba",
         "history_info": "Uchunguzi wote wa mashamba na viwango vya ukali wa magonjwa vilivyofanywa chini ya akaunti yako vimehifadhiwa salama hapa.",
-        "timeline_header": "📈 Uchambuzi wa Mwelekeo wa Ukali wa Maambukizi",
-        "auth_success": "Imethibitishwa kikamilifu kama",
+        "timeline_header": "Uchambuzi wa Mwelekeo wa Ukali wa Maambukizi",
+        "auth_success": "Umeingia kama",
         "email_lbl": "Barua pepe:",
         "user_id_lbl": "Nambari ya Akaunti ya Mtumiaji:",
-        "no_history_msg": "Hakuna historia ya uchunguzi iliyorekodiwa kwa akaunti hii. Fanya uchunguzi kwenye Kituo cha Uchunguzi!",
+        "no_history_msg": "Hakuna historia ya uchunguzi inayopatikana kwa akaunti hii.",
         "col_time": "Muda",
         "col_hub": "Eneo la Kituo",
         "col_crop": "Mmea",
@@ -580,28 +506,28 @@ TRANSLATIONS = {
         "col_conf": "Uhakika (%)",
         "col_stage": "Hatua ya Ukali",
         "col_sev_pct": "Ukali (%)",
-        "map_title": "🗺️ Ramani ya Kitaifa na Kimataifa ya Magonjwa",
+        "map_title": "Ramani ya Kitaifa na Kimataifa ya Magonjwa",
         "map_subtitle": "Ufuatiliaji wa Usalama wa B2G & Taswira ya Kuenea kwa Magonjwa",
-        "map_cluster_header": "📊 Vikundi Vikuu vya Milipuko ya Phytosanitary",
+        "map_cluster_header": "Vikundi Vikuu vya Milipuko ya Phytosanitary",
         "filter_crop": "Chuja Ramani kwa Aina ya Mmea:",
         "all_crops_opt": "Mazao Yote",
-        "sev_key_title": "🗺️ Ufunguo wa Ukali wa Mlipuko:",
-        "sev_1": "🟢 Hatua ya 1: Dalili kidogo za kubadilika kwa rangi",
-        "sev_2": "🟠 Hatua ya 2: Dalili za wastani za kubadilika kwa rangi",
-        "sev_3": "🔴 Hatua ya 3: Dalili nyingi za kubadilika kwa rangi",
+        "sev_key_title": "Ufunguo wa Ukali wa Mlipuko:",
+        "sev_1": "Hatua ya 1: Dalili kidogo za kubadilika kwa rangi",
+        "sev_2": "Hatua ya 2: Dalili za wastani za kubadilika kwa rangi",
+        "sev_3": "Hatua ya 3: Dalili nyingi za kubadilika kwa rangi",
         "sev_note": "* Ukubwa wa duara unaendana na ukali wa maambukizi",
-        "audit_header": "📑 Njia ya Ukaguzi wa Telemetry",
+        "audit_header": "Njia ya Ukaguzi wa Telemetry",
         "no_map_data": "Hakuna takwimu za uchunguzi wa eneo zilizorekodiwa bado katika kipindi hiki.",
         "no_crop_match": "Hakuna takwimu zinazolingana na mmea ulichaguliwa.",
-        "ai_title": "🤖 CropGuard AI — Msaidizi wa Kitaalamu",
-        "ai_subtitle": "Ushauri wa Kilimo wa Wakati Halisi & Utaalamu wa Magonjwa",
-        "chat_header": "💬 Jedwali la Mazungumzo ya Kilimo cha Kisasa",
-        "chat_info": "Uliza swali lolote kuhusu magonjwa ya mimea, afya ya udongo, au udhibiti wa wadudu. Imewekwa maalum kwa {hub} katika {lang}.",
-        "chat_welcome": "Jambo {user}! Mimi ni msaidizi wako wa AI wa kilimo katika CropGuard AI. Ninawezaje kukusaidia kuboresha afya ya mazao yako katika {hub} leo?",
-        "chat_input_ph": "Uliza kuhusu magonjwa ya mimea, udhibiti wa wadudu, au ushauri...",
-        "forum_title": "💬 Jukwaa la Jamii ya Wakulima wa Kanda",
-        "forum_subtitle": "Unganisha, Shiriki na Ushirikiane na Wakulima wa Karibu katika",
-        "broadcast_header": "✍️ Tangaza kwa Wakulima wa Eneo Lako",
+        "ai_title": "CropGuard AI — Usaidizi wa Maamuzi ya Kilimo",
+        "ai_subtitle": "Mwongozo wa Uchunguzi wa Mazao na Rejea ya Magonjwa",
+        "chat_header": "Kiolesura cha Maswali ya Kilimo",
+        "chat_info": "Wasilisha maswali kuhusu afya ya mazao, wadudu, udongo au matibabu. Majibu huzingatia {hub} na {lang}.",
+        "chat_welcome": "Mfumo uko tayari. Unasubiri swali la uchunguzi kutoka kwa {user}. Eneo: {hub}.",
+        "chat_input_ph": "Weka dalili za zao au pakia picha kwa uchambuzi...",
+        "forum_title": "Jukwaa la Jamii ya Wakulima wa Kanda",
+        "forum_subtitle": "Mtiririko wa taarifa za wakulima wa eneo:",
+        "broadcast_header": "Chapisha kwa Wakulima wa Eneo",
         "tag_label": "Lebo ya Mada:",
         "msg_label": "Shiriki taarifa, uliza swali, au tahadharisha majirani...",
         "forum_media_label": "Ongeza picha au video (si lazima)",
@@ -610,26 +536,26 @@ TRANSLATIONS = {
         "forum_media_invalid": "Faili hili halijasomeka kama picha inayotumika. Chagua picha halali ya JPG, PNG au WebP.",
         "forum_post_empty": "Andika ujumbe au ambatisha picha/video kabla ya kushiriki.",
         "forum_media_name": "Kiambatisho",
-        "share_btn": "📢 Shiriki na Jamii",
-        "feed_header": "📰 Mtiririko wa Moja kwa Moja wa Jamii",
-        "post_posted_msg": "Ujumbe wako umechapishwa kwenye mtandao wa wakulima wa eneo lako!",
+        "share_btn": "Shiriki na Jamii",
+        "feed_header": "Mtiririko wa Moja kwa Moja wa Jamii",
+        "post_posted_msg": "Ujumbe wako umechapishwa kwenye mtiririko wa taarifa za eneo.",
         "post_empty_msg": "Tafadhali andika ujumbe kabla ya kutuma.",
-        "no_posts_msg": "Bado hakuna machapisho ya jamii katika {hub}. Kuwa mkulima wa kwanza kushiriki!",
-        "diag_title": "🌱 CropGuard AI",
-        "diag_subtitle": "Msaidizi wa Juu wa Maono ya Kompyuta wa Kilimo (Toleo la Dunia)",
+        "no_posts_msg": "Hakuna machapisho ya jamii yanayopatikana kwa {hub}.",
+        "diag_title": "CropGuard AI",
+        "diag_subtitle": "Uchunguzi wa Picha za Mazao na Rejea ya Kilimo (Toleo la Kimataifa)",
         "tour_btn": "Rudia ziara elekezi",
         "crop_select_prompt": "Chagua Aina ya Mmea unaochunguzwa:",
-        "crop_select_header": "🌾 Chagua Muktadha wa Mmea",
-        "upload_header": "📥 1.",
+        "crop_select_header": "Chagua Muktadha wa Mmea",
+        "upload_header": "1.",
         "upload_label_text": "Pakia au piga picha ya jani la mmea lenye maambukizi...",
         "quality_integrity_header": "Ukaguzi wa ubora na uadilifu",
         "leaf_upload_help": "Tumia picha iliyo wazi na yenye mwanga mzuri ya jani lililoathirika.",
         "image_open_error": "Picha hii haikuweza kufunguliwa au kukaguliwa: {error}",
-        "scan_another_btn": "🔄 Chunguza Jani Lingine",
-        "analyze_btn": "Fanya Uchunguzi wa AI",
+        "scan_another_btn": "Chakata Sampuli Mpya",
+        "analyze_btn": "Tekeleza Uchunguzi wa Zao",
         "results_header": "Matokeo ya Uchunguzi",
         "treatment_header": "Usimamizi wa Kilimo na Saraka ya Rasilimali za Kanda",
-        "hub_support_header": "📍 Usaidizi wa Kituo na Saraka ya Ugani",
+        "hub_support_header": "Usaidizi wa Kituo na Saraka ya Ugani",
         "analysis_complete_msg": "Uchambuzi wa picha umekamilika.",
         "crop_context_lbl": "Muktadha wa Mmea Lengo:",
         "pattern_match_lbl": "Ulinganifu Mkuu wa Ugonjwa:",
@@ -650,43 +576,43 @@ TRANSLATIONS = {
         "quality_metrics": "Ukaguzi wa ubora: pikseli {width}×{height} · ukali {sharpness:.1f} · mwangaza {brightness:.0f}/255 · utofauti {contrast:.1f}.",
         "quality_confidence_caution": "Ukaguzi wa ubora wa picha ni makadirio, si modeli iliyofunzwa. Alama ya modeli haijathibitishwa na si uwezekano wa utambuzi kuwa sahihi.",
         "hub_support_info": "Rasilimali za eneo huchaguliwa kiotomatiki kwa kutumia kituo kilicholinganishwa na GPS yako inapowezekana; vinginevyo, eneo lililochaguliwa ndilo hutumika.",
-        "diagnostic_empty_prompt": "👈 Chagua eneo lako, chagua aina ya mmea, pakia picha upande wa kushoto, na ubonyeze Fanya Uchunguzi wa AI ili kuona matokeo hapa.",
+        "diagnostic_empty_prompt": "Chagua eneo na zao, pakia picha, kisha tekeleza uchunguzi ili kuona matokeo hapa.",
         "footer_text": "CropGuard AI — Mtandao wa Kitaifa wa Ufuatiliaji wa Magonjwa ya Mimea na Kilimo Duniani"
     },
     "French": {
-        "nav_diag": "🌱 Centre de Diagnostic & Conseil",
-        "nav_map": "🗺️ Carte Épidémiologique B2G",
-        "nav_ai": "🤖 Assistant Virtuel Agritech AI",
-        "nav_forum": "💬 Forum Communautaire Agricole",
-        "nav_acc": "🔐 Portail Compte & Historique Agence",
-        "settings": "⚙️ Paramètres / Configuration",
-        "nav_header": "🧭 Navigation de la Plateforme",
+        "nav_diag": "Centre de Diagnostic & Conseil",
+        "nav_map": "Carte Épidémiologique B2G",
+        "nav_ai": "Assistant Virtuel Agritech AI",
+        "nav_forum": "Forum Communautaire Agricole",
+        "nav_acc": "Portail Compte & Historique Agence",
+        "settings": "Paramètres / Configuration",
+        "nav_header": "Navigation de la Plateforme",
         "select_portal": "Sélectionner la Vue du Portail",
         "select_hub_label": "Sélectionner la Région Agricole Mondiale",
         "select_lang_label": "Choisir la Langue",
-        "climate_header": "🌦️ Risque Micro-Climatique",
-        "b2g_header": "🏛️ Ministère B2G & Sécurité Biologique",
+        "climate_header": "Risque Micro-Climatique",
+        "b2g_header": "Ministère B2G & Sécurité Biologique",
         "about_header": "À propos de CropGuard AI",
-        "about_text": "Permettre aux agriculteurs et aux ministères de l'agriculture du monde entier de bénéficier d'un diagnostic instantané des cultures.",
+        "about_text": "Fournit aux agriculteurs et aux organismes agricoles des outils de dépistage des cultures, de surveillance régionale et d’information sur les services de conseil.",
         "active_vectors": "Total des Vecteurs Suivis :",
         "no_telemetry_sidebar": "Aucune télémétrie enregistrée pour le moment.",
         "outbreak_warning": "Alerte d'Épidémie",
-        "reg_early_warning": "🚨 Alerte Précoce d'Épidémie Régionale",
+        "reg_early_warning": "Alerte Précoce d'Épidémie Régionale",
         "phytosanitary_feed": "Flux National de Surveillance Épidémiologique",
-        "gps_btn_label": "📍 Détecter GPS",
-        "acc_title": "🔐 Compte Agriculteur & Historique Sécurisé",
+        "gps_btn_label": "Détecter GPS",
+        "acc_title": "Compte Agriculteur & Historique Sécurisé",
         "acc_subtitle": "Gérez vos identifiants et consultez l'historique complet et persistant de vos scans agronomiques.",
-        "profile_header": "👤 Profil du Compte Actif",
-        "login_prompt": "🔐 Veuillez vous connecter avec votre compte Google pour accéder à votre historique persistant.",
-        "login_btn": "🔗 Se connecter avec Google",
-        "logout_btn": "🚪 Se déconnecter",
-        "history_header": "📋 Historique des Scans de la Ferme",
+        "profile_header": "Profil du Compte Actif",
+        "login_prompt": "Veuillez vous connecter avec votre compte Google pour accéder à votre historique persistant.",
+        "login_btn": "Se connecter avec Google",
+        "logout_btn": "Se déconnecter",
+        "history_header": "Historique des Scans de la Ferme",
         "history_info": "Tous les scans de terrain et scores de sévérité de maladies sont conservés ici en toute sécurité.",
-        "timeline_header": "📈 Analyse Chronologique de la Sévérité des Infections",
-        "auth_success": "Authentifié avec succès en tant que",
+        "timeline_header": "Analyse Chronologique de la Sévérité des Infections",
+        "auth_success": "Authentifié en tant que",
         "email_lbl": "E-mail :",
         "user_id_lbl": "ID du Compte Utilisateur :",
-        "no_history_msg": "Aucun historique de scan enregistré pour ce compte. Effectuez un scan dans le Centre de Diagnostic !",
+        "no_history_msg": "Aucun historique de scan n’est disponible pour ce compte.",
         "col_time": "Horodatage",
         "col_hub": "Région du Hub",
         "col_crop": "Culture",
@@ -694,28 +620,28 @@ TRANSLATIONS = {
         "col_conf": "Confiance (%)",
         "col_stage": "Stade de Sévérité",
         "col_sev_pct": "Sévérité (%)",
-        "map_title": "🗺️ Carte Épidémiologique Nationale & Mondiale",
+        "map_title": "Carte Épidémiologique Nationale & Mondiale",
         "map_subtitle": "Surveillance de la Sécurité B2G & Cartographie de la Prévalence",
-        "map_cluster_header": "📊 Foyers Épidémiologiques Phytosanitaires en Direct",
+        "map_cluster_header": "Foyers Épidémiologiques Phytosanitaires en Direct",
         "filter_crop": "Filtrer la Carte par Catégorie de Culture :",
         "all_crops_opt": "Toutes les Cultures",
-        "sev_key_title": "🗺️ Clé de Sévérité de l'Épidémie :",
-        "sev_1": "🟢 Stade 1 : Peu de décoloration visible",
-        "sev_2": "🟠 Stade 2 : Décoloration visible modérée",
-        "sev_3": "🔴 Stade 3 : Forte décoloration visible",
+        "sev_key_title": "Clé de Sévérité de l'Épidémie :",
+        "sev_1": "Stade 1 : Peu de décoloration visible",
+        "sev_2": "Stade 2 : Décoloration visible modérée",
+        "sev_3": "Stade 3 : Forte décoloration visible",
         "sev_note": "* La taille du cercle varie selon la sévérité de l'infection",
-        "audit_header": "📑 Piste d'Audit de Télémétrie de Surveillance",
+        "audit_header": "Piste d'Audit de Télémétrie de Surveillance",
         "no_map_data": "Aucune télémétrie de scan régional n'a encore été enregistrée dans cette session.",
         "no_crop_match": "Aucune télémétrie enregistrée ne correspond au filtre de culture sélectionné.",
-        "ai_title": "🤖 CropGuard AI — Assistant Expert Virtuel",
-        "ai_subtitle": "Conseil Agronomique en Temps Réel & Consultation en Pathologie",
-        "chat_header": "💬 Bureau de Discussion Agritech Interactif",
-        "chat_info": "Posez une question sur les maladies des cultures, la santé des sols ou les ravageurs. Calibré pour {hub} en {lang}.",
-        "chat_welcome": "Bonjour {user} ! Je suis votre assistant agronome virtuel CropGuard AI. Comment puis-je vous aider à optimiser la santé de vos cultures à {hub} aujourd'hui ?",
-        "chat_input_ph": "Posez une question sur les maladies des cultures, les ravageurs...",
-        "forum_title": "💬 Forum Communautaire Agricole Régional",
-        "forum_subtitle": "Connectez-vous et collaborez avec les agriculteurs voisins à",
-        "broadcast_header": "✍️ Diffuser aux Agriculteurs Locaux",
+        "ai_title": "CropGuard AI — Aide à la décision agronomique",
+        "ai_subtitle": "Guide de dépistage des cultures et référence phytosanitaire",
+        "chat_header": "Interface de requête agronomique",
+        "chat_info": "Soumettez vos questions sur les cultures, les ravageurs, les sols ou les traitements. Les réponses tiennent compte de {hub} et {lang}.",
+        "chat_welcome": "Système prêt. En attente d'une requête de diagnostic de {user}. Région : {hub}.",
+        "chat_input_ph": "Saisissez les symptômes ou téléversez une image pour analyse...",
+        "forum_title": "Forum Communautaire Agricole Régional",
+        "forum_subtitle": "Espace régional d’échange d’informations agricoles :",
+        "broadcast_header": "Publier pour les agriculteurs locaux",
         "tag_label": "Étiquette de Sujet :",
         "msg_label": "Partagez une mise à jour, posez une question ou alertez...",
         "forum_media_label": "Ajouter une image ou une vidéo (facultatif)",
@@ -724,26 +650,26 @@ TRANSLATIONS = {
         "forum_media_invalid": "Impossible de lire ce fichier comme image. Choisissez une image JPG, PNG ou WebP valide.",
         "forum_post_empty": "Ajoutez un message ou joignez une image/vidéo avant de partager.",
         "forum_media_name": "Pièce jointe",
-        "share_btn": "📢 Partager avec la Communauté",
-        "feed_header": "📰 Fil Communautaire en Direct",
-        "post_posted_msg": "Votre message a été publié sur le fil régional !",
+        "share_btn": "Partager avec la Communauté",
+        "feed_header": "Fil Communautaire en Direct",
+        "post_posted_msg": "Votre message a été publié sur le fil régional.",
         "post_empty_msg": "Veuillez saisir un message avant d'envoyer.",
-        "no_posts_msg": "Aucune publication pour le moment à {hub}. Soyez le premier à partager !",
-        "diag_title": "🌱 CropGuard AI",
-        "diag_subtitle": "Assistant Agritech Avancé par Vision par Ordinateur (Édition Mondiale)",
+        "no_posts_msg": "Aucune publication n’est disponible pour {hub}.",
+        "diag_title": "CropGuard AI",
+        "diag_subtitle": "Dépistage d’images de cultures et référence agronomique (édition mondiale)",
         "tour_btn": "Revoir la visite guidée",
         "crop_select_prompt": "Sélectionnez le type de culture cible :",
-        "crop_select_header": "🌾 Contexte de la Culture",
-        "upload_header": "📥 1.",
+        "crop_select_header": "Contexte de la Culture",
+        "upload_header": "1.",
         "upload_label_text": "Téléchargez ou prenez une photo d'une feuille de culture affectée...",
         "quality_integrity_header": "Contrôles de qualité et d’intégrité",
         "leaf_upload_help": "Utilisez une photo nette et bien éclairée d’une feuille affectée.",
         "image_open_error": "Impossible d’ouvrir ou d’évaluer cette image : {error}",
-        "scan_another_btn": "🔄 Analyser une autre feuille",
-        "analyze_btn": "Lancer l'Analyse Diagnostique",
+        "scan_another_btn": "Traiter un nouvel échantillon",
+        "analyze_btn": "Exécuter le scan diagnostique",
         "results_header": "Résultats du Diagnostic",
         "treatment_header": "Gestion Agronomique & Répertoire Régional",
-        "hub_support_header": "📍 Support du Hub et Répertoire d'Extension",
+        "hub_support_header": "Support du Hub et Répertoire d'Extension",
         "analysis_complete_msg": "Analyse de l’image terminée.",
         "crop_context_lbl": "Contexte de la Culture Cible :",
         "pattern_match_lbl": "Correspondance Principale :",
@@ -764,29 +690,29 @@ TRANSLATIONS = {
         "quality_metrics": "Contrôle qualité : {width}×{height}px · netteté {sharpness:.1f} · luminosité {brightness:.0f}/255 · contraste {contrast:.1f}.",
         "quality_confidence_caution": "Le contrôle qualité est heuristique, et non un modèle entraîné. Le score du modèle n’est pas calibré et ne représente pas la probabilité d’un diagnostic correct.",
         "hub_support_info": "Les ressources régionales sont sélectionnées automatiquement selon le hub associé au GPS lorsque l’accès à la position est disponible ; sinon, la région sélectionnée est utilisée.",
-        "diagnostic_empty_prompt": "👈 Sélectionnez votre région, choisissez votre culture, téléchargez une image sur la gauche et cliquez sur Lancer l'Analyse Diagnostique pour afficher les résultats ici.",
+        "diagnostic_empty_prompt": "Sélectionnez votre région et votre culture, téléversez une image, puis exécutez un scan diagnostique pour afficher les résultats.",
         "footer_text": "CropGuard AI — Network National de Surveillance Phytosanitaire & Réseau Agronomique Mondial"
     }
 }
 
 GPS_TEXT = {
     "English": {
-        "gps_ok": "📍 Location found ({lat}, {lon}) → {hub}, {km} km from the hub centre.",
-        "gps_global": "📍 Location found ({lat}, {lon}). No regional hub is within {max_km} km, so the Global / Universal Zone is selected.",
+        "gps_ok": "Location found ({lat}, {lon}) → {hub}, {km} km from the hub centre.",
+        "gps_global": "Location found ({lat}, {lon}). No regional hub is within {max_km} km, so the Global / Universal Zone is selected.",
         "gps_denied": "Location access is blocked. Allow location for this site in your browser settings, then press Auto-Detect GPS again, or pick your region below.",
         "gps_insecure": "Location needs a secure connection. Open this app at an https:// address (or on localhost), then try again.",
         "gps_failed": "Your location could not be read. Turn on location services on your device and try again, or pick your region below.",
     },
     "Kiswahili": {
-        "gps_ok": "📍 Eneo limepatikana ({lat}, {lon}) → {hub}, umbali wa km {km} kutoka katikati ya kituo.",
-        "gps_global": "📍 Eneo limepatikana ({lat}, {lon}). Hakuna kituo cha kanda ndani ya km {max_km}, kwa hiyo Eneo la Kimataifa / Jumla limechaguliwa.",
+        "gps_ok": "Eneo limepatikana ({lat}, {lon}) → {hub}, umbali wa km {km} kutoka katikati ya kituo.",
+        "gps_global": "Eneo limepatikana ({lat}, {lon}). Hakuna kituo cha kanda ndani ya km {max_km}, kwa hiyo Eneo la Kimataifa / Jumla limechaguliwa.",
         "gps_denied": "Ufikiaji wa eneo umezuiwa. Ruhusu eneo kwa tovuti hii kwenye mipangilio ya kivinjari chako, kisha bonyeza Auto-Detect GPS tena, au chagua eneo lako hapa chini.",
         "gps_insecure": "Utambuzi wa eneo unahitaji muunganisho salama. Fungua programu hii kwenye anwani ya https:// (au localhost), kisha ujaribu tena.",
         "gps_failed": "Eneo lako halikuweza kusomwa. Washa huduma za eneo kwenye kifaa chako kisha ujaribu tena, au chagua eneo lako hapa chini.",
     },
     "French": {
-        "gps_ok": "📍 Position trouvée ({lat}, {lon}) → {hub}, à {km} km du centre du hub.",
-        "gps_global": "📍 Position trouvée ({lat}, {lon}). Aucun hub régional à moins de {max_km} km : la Zone Mondiale / Universelle est sélectionnée.",
+        "gps_ok": "Position trouvée ({lat}, {lon}) → {hub}, à {km} km du centre du hub.",
+        "gps_global": "Position trouvée ({lat}, {lon}). Aucun hub régional à moins de {max_km} km : la Zone Mondiale / Universelle est sélectionnée.",
         "gps_denied": "L'accès à la position est bloqué. Autorisez la localisation pour ce site dans les paramètres du navigateur, puis appuyez de nouveau sur Auto-Detect GPS, ou choisissez votre région ci-dessous.",
         "gps_insecure": "La localisation nécessite une connexion sécurisée. Ouvrez cette application à une adresse https:// (ou sur localhost), puis réessayez.",
         "gps_failed": "Votre position n'a pas pu être lue. Activez la localisation sur votre appareil puis réessayez, ou choisissez votre région ci-dessous.",
@@ -998,9 +924,9 @@ def init_epidemiological_db():
     cursor.execute("SELECT COUNT(*) FROM farmer_community_posts")
     if cursor.fetchone()[0] == 0:
         sample_posts = [
-            ("2026-10-11 09:00", "Kisii, Kenya (Highland Zone)", "Mzee Juma", "🚨 Outbreak Alert", "Noticed early Fall Armyworm activity on maize stalks near Kenyenya. Inspect fields before evening rains!"),
-            ("2026-10-11 11:30", "Kisii, Kenya (Highland Zone)", "CropGuard Field Team", "🌾 Crop Advice", "Applying copper-based fungicides early morning helps reduce spore germination during high humidity weeks."),
-            ("2026-10-11 14:15", "Kumasi, Ghana (Cocoa & Grain Belt)", "Kwame Mensah", "🛒 Marketplace / Trade", "Looking for bulk organic nematicides delivered near Kumasi central hub. Reach out if available.")
+            ("2026-10-11 09:00", "Kisii, Kenya (Highland Zone)", "Mzee Juma", "Outbreak Alert", "Noticed early Fall Armyworm activity on maize stalks near Kenyenya. Inspect fields before evening rains."),
+            ("2026-10-11 11:30", "Kisii, Kenya (Highland Zone)", "CropGuard Field Team", "Crop Advice", "Applying copper-based fungicides early morning helps reduce spore germination during high humidity weeks."),
+            ("2026-10-11 14:15", "Kumasi, Ghana (Cocoa & Grain Belt)", "Kwame Mensah", "Marketplace / Trade", "Looking for bulk organic nematicides delivered near Kumasi central hub. Reach out if available.")
         ]
         cursor.executemany('''
             INSERT INTO farmer_community_posts (timestamp, hub_region, author_name, category_tag, message)
@@ -1429,10 +1355,10 @@ def _epi_fit_view(lats, lons):
                          zoom=zoom, pitch=0)
 
 def _epi_legend(T):
-    sev_key = T.get("sev_key_title", "🗺️ Outbreak Severity Key:")
-    s1 = T.get("sev_1", "🟢 Stage 1: Mild (<40% severity)")
-    s2 = T.get("sev_2", "🟠 Stage 2: Moderate (40% - 70% severity)")
-    s3 = T.get("sev_3", "🔴 Stage 3: Terminal (>70% severity)")
+    sev_key = T.get("sev_key_title", "Outbreak Severity Key:")
+    s1 = T.get("sev_1", "Stage 1: Mild (<40% severity)")
+    s2 = T.get("sev_2", "Stage 2: Moderate (40% - 70% severity)")
+    s3 = T.get("sev_3", "Stage 3: Terminal (>70% severity)")
     sev_note = T.get("sev_note", "* Circle size scales with infection severity")
     st.markdown("""
     <style>
@@ -1516,7 +1442,7 @@ def epi_render_heatmap(T):
                      T.get("epi_col_prev", "Prev. period"), T.get("col_sev_pct", "Severity (%)"), T.get("epi_col_last", "Last report")]
     st.dataframe(table, use_container_width=True, hide_index=True)
 
-    with st.expander(T.get("audit_header", "📑 Telemetry Surveillance Audit Trail")):
+    with st.expander(T.get("audit_header", "Telemetry Surveillance Audit Trail")):
         raw = epi_recent_rows(200)
         if not raw.empty:
             raw["status"] = raw["status"].map({"counted": T.get("epi_status_counted", "Counted"),
@@ -1633,7 +1559,7 @@ def render_consensus_report(report, language, search_config=None):
 
     labels = {
         "English": {
-            "title": "🤝 Multi-agent screening consensus",
+            "title": "Multi-agent screening consensus",
             "confidence": "Consensus index (not calibrated)",
             "agreement": "Agent agreement",
             "local_differs": "Secondary local cross-check available",
@@ -1656,7 +1582,7 @@ def render_consensus_report(report, language, search_config=None):
             "vision_error": "Image screening was unavailable; a local fallback was used",
         },
         "Kiswahili": {
-            "title": "🤝 Makubaliano ya uchunguzi wa mawakala wengi",
+            "title": "Makubaliano ya uchunguzi wa mawakala wengi",
             "confidence": "Kielezo cha makubaliano (hakijathibitishwa)",
             "agreement": "Makubaliano ya mawakala",
             "local_differs": "Ukaguzi wa pili wa ndani unapatikana",
@@ -1679,7 +1605,7 @@ def render_consensus_report(report, language, search_config=None):
             "vision_error": "Uchunguzi wa picha haukupatikana; mfumo wa ndani umetumika",
         },
         "French": {
-            "title": "🤝 Consensus de dépistage multi-agents",
+            "title": "Consensus de dépistage multi-agents",
             "confidence": "Indice de consensus (non calibré)",
             "agreement": "Accord des agents",
             "local_differs": "Vérification locale secondaire disponible",
@@ -1959,7 +1885,7 @@ CHEMICAL_ACTION_CODES = frozenset(
 
 _GUIDE_UI_TEXT = {
     "English": {
-        "title": "🌿 Disease reference guide",
+        "title": "Disease reference guide",
         "signs": "Common signs",
         "now": "What to do now",
         "cult": "Field practices",
@@ -1972,7 +1898,7 @@ _GUIDE_UI_TEXT = {
         "country_unknown": "Chemical options are withheld because the selected hub has no verified country registration mapping.",
     },
     "Kiswahili": {
-        "title": "🌿 Mwongozo wa rejea ya ugonjwa",
+        "title": "Mwongozo wa rejea ya ugonjwa",
         "signs": "Dalili za kawaida",
         "now": "Hatua za kuchukua sasa",
         "cult": "Mbinu za shambani",
@@ -1985,7 +1911,7 @@ _GUIDE_UI_TEXT = {
         "country_unknown": "Chaguo za kemikali zimezuiwa kwa sababu kituo kilichochaguliwa hakina ulinganisho wa nchi uliothibitishwa.",
     },
     "French": {
-        "title": "🌿 Guide de référence sur la maladie",
+        "title": "Guide de référence sur la maladie",
         "signs": "Signes fréquents",
         "now": "Mesures immédiates",
         "cult": "Pratiques culturales",
@@ -2097,19 +2023,19 @@ def render_disease_guide(guide_key, crop_name, language, severity_stage, hub_lab
 def render_ppe_safety_warning(language="English"):
     labels = {
         "English": {
-            "title": "⚠️ CRITICAL AGROCHEMICAL SAFETY",
+            "title": "CRITICAL AGROCHEMICAL SAFETY",
             "body": "Agricultural chemical misuse is a severe health risk. If applying treatments, you MUST use:",
             "ppe": ["N95 Respirator Mask", "Chemical-Resistant Gloves", "Long Sleeves & Rubber Boots"],
             "rule": "Do not enter the sprayed field for at least 24 hours (or as dictated by the product label).",
         },
         "Kiswahili": {
-            "title": "⚠️ USALAMA MUHIMU WA KEMIKALI ZA KILIMO",
+            "title": "USALAMA MUHIMU WA KEMIKALI ZA KILIMO",
             "body": "Matumizi mabaya ya kemikali za kilimo ni hatari kwa afya. Ikiwa unatumia matibabu, LAZIMA utumie:",
             "ppe": ["Barakoa ya N95", "Glavu Zinazostahimili Kemikali", "Nguo za Mikono Mirefu na Buti za Mpira"],
             "rule": "Usiingie kwenye shamba lililopuliziwa dawa kwa angalau saa 24 (au kulingana na lebo ya bidhaa).",
         },
         "French": {
-            "title": "⚠️ SÉCURITÉ AGROCHIMIQUE CRITIQUE",
+            "title": "SÉCURITÉ AGROCHIMIQUE CRITIQUE",
             "body": "La mauvaise utilisation des produits chimiques agricoles est un risque grave pour la santé. Lors des traitements, vous DEVEZ utiliser :",
             "ppe": ["Masque respiratoire N95", "Gants résistants aux produits chimiques", "Manches longues et bottes en caoutchouc"],
             "rule": "N'entrez pas dans le champ traité pendant au moins 24 heures (ou selon l'étiquette du produit).",
@@ -2117,13 +2043,13 @@ def render_ppe_safety_warning(language="English"):
     }
     lang_data = labels.get(language, labels["English"])
 
-    st.error(lang_data["title"], icon="🚨")
+    st.error(lang_data["title"], icon="")
     with st.container(border=True):
         st.write(lang_data["body"])
         cols = st.columns(3)
         for idx, item in enumerate(lang_data["ppe"]):
-            cols[idx].markdown(f"✅ **{item}**")
-        st.caption(f"🛑 **{lang_data['rule']}**")
+            cols[idx].markdown(f"**{item}**")
+        st.caption(f"**{lang_data['rule']}**")
 
 
 def render_missing_kb_advisory(
@@ -2436,7 +2362,7 @@ def render_hub_resource_directory(resources, hub_label, gps_status, language):
         return
 
     for resource in resources:
-        with st.expander(f"🌱 {resource['name']}"):
+        with st.expander(f"{resource['name']}"):
             st.write(f"**{labels['location']}:** {resource['location']}")
             st.write(f"**{labels['contact']}:** `{resource['contact']}`")
             st.write(f"**{labels['specialty']}:** {resource['specialty']}")
@@ -2619,11 +2545,11 @@ def render_tts_audio_controls(text_to_speak, lang_code):
     clean_text = text_to_speak.replace('"', '\\"').replace('\n', '. ')
     js_code = f"""
     <div style="margin: 15px 0; display: flex; gap: 10px;">
-        <button id="playPauseBtn" onclick="togglePlayPause()" style="flex: 2; background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%); color: white; border: none; padding: 0.6rem 1rem; border-radius: 8px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 0.95rem;">
-            🔊 Play Audio Summary
+        <button id="playPauseBtn" onclick="togglePlayPause()" style="flex: 2; background: #2F6B3B; color: white; border: none; padding: 0.6rem 1rem; border-radius: 8px; font-weight: 600; cursor: pointer; box-shadow: none; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 0.95rem;">
+            Play Audio Summary
         </button>
-        <button onclick="stopAudio()" style="flex: 1; background: #D32F2F; color: white; border: none; padding: 0.6rem 1rem; border-radius: 8px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 0.95rem;">
-            ⏹ Stop
+        <button onclick="stopAudio()" style="flex: 1; background: #475569; color: white; border: none; padding: 0.6rem 1rem; border-radius: 8px; font-weight: 600; cursor: pointer; box-shadow: none; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 0.95rem;">
+            Stop
         </button>
     </div>
     <script>
@@ -2646,23 +2572,23 @@ def render_tts_audio_controls(text_to_speak, lang_code):
                 utterance.onend = function() {{
                     isPlaying = false;
                     isPaused = false;
-                    btn.innerHTML = "🔊 Play Audio Summary";
+                    btn.innerHTML = "Play Audio Summary";
                 }};
 
                 window.speechSynthesis.speak(utterance);
                 isPlaying = true;
                 isPaused = false;
-                btn.innerHTML = "⏸ Pause";
+                btn.innerHTML = "Pause";
             }} else if (isPlaying && !isPaused) {{
                 window.speechSynthesis.pause();
                 isPaused = true;
                 isPlaying = false;
-                btn.innerHTML = "▶ Resume";
+                btn.innerHTML = "Resume";
             }} else if (!isPlaying && isPaused) {{
                 window.speechSynthesis.resume();
                 isPaused = false;
                 isPlaying = true;
-                btn.innerHTML = "⏸ Pause";
+                btn.innerHTML = "Pause";
             }}
         }}
 
@@ -2672,7 +2598,7 @@ def render_tts_audio_controls(text_to_speak, lang_code):
                 isPlaying = false;
                 isPaused = false;
                 const btn = document.getElementById('playPauseBtn');
-                if (btn) btn.innerHTML = "🔊 Play Audio Summary";
+                if (btn) btn.innerHTML = "Play Audio Summary";
             }}
         }}
     </script>
@@ -2767,7 +2693,7 @@ def render_guided_tour(lang_name, force_start=False):
                     <button id="cg-tour-close" type="button"></button>
                 </div>
                 <div style="height:4px; margin-bottom:16px; overflow:hidden; border-radius:4px; background:#E8EEE8;">
-                    <div id="cg-tour-progress-fill" style="height:100%; border-radius:4px; background:#4B8B55; transition:width .2s ease;"></div>
+                    <div id="cg-tour-progress-fill" style="height:100%; border-radius:4px; background:#4B8B55;"></div>
                 </div>
                 <h3 id="cg-tour-title" style="margin:0 0 8px; color:#1F2937; font-size:1.1rem;"></h3>
                 <p id="cg-tour-description" style="margin:0; color:#4B5563; font-size:.95rem; line-height:1.5;"></p>
@@ -2931,7 +2857,7 @@ GPS_COMPONENT_HTML = """<!DOCTYPE html>
 </style>
 </head>
 <body>
-<button id="gpsBtn" type="button">📍 Auto-Detect GPS</button>
+<button id="gpsBtn" type="button">Auto-Detect GPS</button>
 <script>
 (function () {
   var btn = document.getElementById("gpsBtn");
@@ -2972,7 +2898,7 @@ GPS_COMPONENT_HTML = """<!DOCTYPE html>
     }
     busy = true;
     btn.disabled = true;
-    btn.textContent = "⏳ Locating…";
+    btn.textContent = "Locating…";
     var watchdog = setTimeout(release, 35000);
     try {
       var pos;
@@ -3128,12 +3054,10 @@ section[data-testid="stSidebar"] [data-testid="stRadio"] label {
     margin: .12rem 0;
     border: 1px solid transparent;
     border-radius: 11px;
-    transition: background-color .2s ease, border-color .2s ease, transform .2s ease;
 }
 section[data-testid="stSidebar"] [data-testid="stRadio"] label:hover {
     background: rgba(255, 255, 255, .72);
     border-color: rgba(68, 125, 78, .2);
-    transform: translateX(2px);
 }
 section[data-testid="stSidebar"] [data-testid="stSelectbox"] label {
     color: #49634f !important;
@@ -3189,8 +3113,10 @@ section[data-testid="stSidebar"] [data-testid="stExpander"] {
     border: 1px solid rgba(241, 255, 232, .35);
     border-radius: 14px;
     background: rgba(255, 255, 255, .12);
-    font-size: 1.65rem;
-    animation: cgSproutSway 3.4s ease-in-out infinite;
+    color: #fff;
+    font-size: .9rem;
+    font-weight: 750;
+    letter-spacing: .04em;
 }
 .cg-brand-copy { z-index: 1; min-width: 0; }
 .cg-brand-title {
@@ -3205,21 +3131,6 @@ section[data-testid="stSidebar"] [data-testid="stExpander"] {
     font-size: .66rem;
     font-weight: 700;
     letter-spacing: .13em;
-}
-.cg-brand-seed {
-    position: absolute;
-    right: 25px;
-    bottom: 15px;
-    color: #d4f5a3;
-    font-size: .8rem;
-    animation: cgSeedDrift 3.6s ease-in-out infinite;
-}
-.cg-brand-seed-two {
-    right: 49px;
-    bottom: 28px;
-    color: #f0d986;
-    font-size: .6rem;
-    animation-delay: -1.7s;
 }
 .cg-user-identity {
     margin: 0 0 .65rem;
@@ -3294,28 +3205,6 @@ section[data-testid="stSidebar"] [data-testid="stExpander"] {
     margin-top: 4px;
     border-radius: 50%;
     background: #d99b32;
-    box-shadow: 0 0 0 0 rgba(217, 155, 50, .35);
-    animation: cgRiskPulse 2.2s ease-out infinite;
-}
-@keyframes cgSproutSway {
-    0%, 100% { transform: rotate(-4deg) translateY(0); }
-    50% { transform: rotate(4deg) translateY(-2px); }
-}
-@keyframes cgSeedDrift {
-    0%, 100% { transform: translate3d(0, 3px, 0) rotate(-8deg); opacity: .58; }
-    50% { transform: translate3d(-5px, -5px, 0) rotate(8deg); opacity: 1; }
-}
-@keyframes cgRiskPulse {
-    0% { box-shadow: 0 0 0 0 rgba(217, 155, 50, .38); }
-    70%, 100% { box-shadow: 0 0 0 6px rgba(217, 155, 50, 0); }
-}
-@media (prefers-reduced-motion: reduce) {
-    .cg-brand-mark, .cg-brand-seed, .cg-climate-pulse {
-        animation: none !important;
-    }
-    section[data-testid="stSidebar"] [data-testid="stRadio"] label {
-        transition: none;
-    }
 }
 </style>
 """, unsafe_allow_html=True)
@@ -3323,13 +3212,11 @@ section[data-testid="stSidebar"] [data-testid="stExpander"] {
 # 1. Branding & Identity (Top)
 st.sidebar.markdown("""
 <div class="cg-brand-card">
-    <div class="cg-brand-mark" aria-hidden="true">🌱</div>
+    <div class="cg-brand-mark" aria-hidden="true">CG</div>
     <div class="cg-brand-copy">
         <div class="cg-brand-title">CropGuard AI</div>
-        <div class="cg-brand-tagline">GROW · MONITOR · PROTECT</div>
+        <div class="cg-brand-tagline">CROP HEALTH · SURVEILLANCE · ADVISORY</div>
     </div>
-    <span class="cg-brand-seed" aria-hidden="true">✦</span>
-    <span class="cg-brand-seed cg-brand-seed-two" aria-hidden="true">✧</span>
 </div>
 """, unsafe_allow_html=True)
 st.sidebar.markdown(
@@ -3345,7 +3232,7 @@ if st.sidebar.button("Log out", key="google_oidc_logout", use_container_width=Tr
 st.sidebar.markdown("---")
 
 # 2. Primary Navigation
-st.sidebar.subheader(T.get("nav_header", "🧭 Platform Navigation"))
+st.sidebar.subheader(T.get("nav_header", "Platform Navigation"))
 app_mode = st.sidebar.radio(
     T.get("select_portal", "Select Portal View"), 
     [
@@ -3362,10 +3249,10 @@ st.sidebar.markdown("---")
 
 # 3. Region & Language Calibration
 st.sidebar.markdown("<div id='tour-target-hub'></div>", unsafe_allow_html=True)
-st.sidebar.subheader("🌍 Region & Language Calibration")
+st.sidebar.subheader("Region & Language Calibration")
 
 with st.sidebar:
-    gps_reading = gps_detector(label="📍 Auto-Detect GPS", auto=GPS_AUTO_ON_LOAD, key="cg_gps_detector")
+    gps_reading = gps_detector(label="Auto-Detect GPS", auto=GPS_AUTO_ON_LOAD, key="cg_gps_detector")
     gps_status_slot = st.container()
 
 if isinstance(gps_reading, dict) and gps_reading.get("t") != st.session_state.get("_gps_last_t"):
@@ -3662,14 +3549,14 @@ st.sidebar.markdown("---")
 st.sidebar.markdown(f"""
 <div class="cg-climate-card">
     <div class="cg-climate-title">{html.escape(T["climate_header"])}</div>
-    <div class="cg-climate-meta">📍 {html.escape(selected_hub_label)}</div>
+    <div class="cg-climate-meta">{html.escape(selected_hub_label)}</div>
     <div class="cg-climate-stats">
         <div class="cg-climate-stat">
-            <div class="cg-climate-stat-label">🌡️ Temperature</div>
+            <div class="cg-climate-stat-label">Temperature</div>
             <div class="cg-climate-stat-value">{html.escape(str(active_zone_data['temp']))}°C</div>
         </div>
         <div class="cg-climate-stat">
-            <div class="cg-climate-stat-label">💧 Humidity</div>
+            <div class="cg-climate-stat-label">Humidity</div>
             <div class="cg-climate-stat-value">{html.escape(str(active_zone_data['humidity']))}%</div>
         </div>
     </div>
@@ -4541,7 +4428,7 @@ def _parse_kamis_numeric_values(values):
 
 
 def render_fair_market_board():
-    st.markdown("### ⚖️ Kenya Agricultural Market Prices")
+    st.markdown("### Kenya Agricultural Market Prices")
     st.caption(
         "Official market observations from the Kenya Agricultural Market Information "
         "System (KAMIS), Ministry of Agriculture. Data is cached for up to seven days "
@@ -4679,13 +4566,37 @@ def render_fair_market_board():
 
 
 def render_financial_impact_estimator(crop_name):
-    st.markdown("### 💰 Farm Revenue-at-Risk Estimator")
+    st.markdown("### Farm Revenue-at-Risk Estimator")
     st.caption(
-        "Uses a dated KAMIS market price and the farm figures you provide. "
-        "It does not infer yield loss from leaf discoloration or assume a treatment will work."
+        "Uses a dated price from the Kenya Agricultural Market Information System "
+        "(KAMIS) and regional agricultural baselines. "
+        "Adjust the pre-filled averages below to match your specific farm conditions."
     )
 
+    # Regional baseline averages for Kenyan Highlands/Rift Valley (Yield in kg/acre, Cost in KES/acre)
+    CROP_ECONOMICS_BASELINES = {
+        "maize": {"yield": 1800.0, "cost": 3500.0},
+        "potato": {"yield": 8000.0, "cost": 6000.0},
+        "tomato": {"yield": 15000.0, "cost": 8000.0},
+        "bean": {"yield": 800.0, "cost": 2500.0},
+        "rice": {"yield": 2500.0, "cost": 4000.0},
+        "wheat": {"yield": 1200.0, "cost": 3000.0},
+        "cassava": {"yield": 6000.0, "cost": 2000.0}
+    }
+
     crop_key = re.sub(r"[^a-z0-9]+", "_", str(crop_name).casefold()).strip("_") or "crop"
+    crop_text = str(crop_name).casefold()
+
+    baseline_yield = 0.0
+    baseline_cost = 0.0
+    for key, baselines in CROP_ECONOMICS_BASELINES.items():
+        if key in crop_text:
+            baseline_yield = baselines["yield"]
+            baseline_cost = baselines["cost"]
+            break
+
+    ai_severity = float(st.session_state.get("last_severity_pct", 0.0))
+
     try:
         products, _, _ = _fetch_kamis_market_page(per_page=10)
     except (requests.RequestException, RuntimeError) as error:
@@ -4693,7 +4604,6 @@ def render_financial_impact_estimator(crop_name):
         st.markdown(f"[Open the official KAMIS market listings]({KAMIS_MARKET_URL})")
         return
 
-    crop_text = str(crop_name).casefold()
     product_match_terms = []
     if "maize" in crop_text:
         product_match_terms = ["dry maize"]
@@ -4846,10 +4756,10 @@ def render_financial_impact_estimator(crop_name):
             "Expected harvest without this issue (kg per acre)",
             min_value=0.0,
             max_value=1000000.0,
-            value=0.0,
+            value=baseline_yield,
             step=50.0,
             key=f"financial_expected_yield_kg_per_acre_{crop_key}",
-            help="Enter your expected harvest based on this crop and farm; zero means not entered yet.",
+            help="Pre-filled with regional averages. Adjust to match your specific farm.",
         )
 
     loss_col, cost_col = st.columns(2)
@@ -4858,29 +4768,21 @@ def render_financial_impact_estimator(crop_name):
             "Your estimated yield loss if unmanaged (%)",
             min_value=0.0,
             max_value=100.0,
-            value=0.0,
+            value=ai_severity,
             step=1.0,
             key=f"financial_expected_loss_pct_{crop_key}",
-            help="This is your own estimate, not the AI leaf-discoloration score.",
+            help="Pre-filled using the AI leaf severity score. Adjust based on field spread.",
         )
     with cost_col:
         treatment_cost = st.number_input(
             "Treatment and application cost for this area (KES)",
             min_value=0.0,
             max_value=1000000000.0,
-            value=0.0,
+            value=baseline_cost,
             step=100.0,
             key=f"financial_treatment_cost_kes_{crop_key}",
-            help="Enter a local supplier quote and any application/labour costs; zero means not entered yet.",
+            help="Pre-filled with estimated regional treatment costs. Adjust if you have a specific quote.",
         )
-
-    if expected_yield_per_acre <= 0:
-        st.info(
-            "Enter your expected harvest to calculate the value at risk. Add your "
-            "current treatment/application quote to compare it with the estimate; "
-            "enter 0 if no treatment cost is expected."
-        )
-        return
 
     expected_revenue = acreage * expected_yield_per_acre * float(unit_price)
     value_at_risk = expected_revenue * (expected_loss_pct / 100)
@@ -4953,7 +4855,7 @@ if app_mode == T["nav_acc"]:
         )
         with st.container(key="cg-account-profile", border=True):
             st.markdown(f"### {T['profile_header']}")
-            st.success(f"{T['auth_success']} {st.session_state['user_display_name']}!")
+            st.success(f"{T['auth_success']} {st.session_state['user_display_name']}.")
             st.markdown(
                 f"<p><strong>{html_escape(T['email_lbl'])}</strong> "
                 f"<span class='cg-account-value' style='display:inline-block;"
@@ -4968,7 +4870,7 @@ if app_mode == T["nav_acc"]:
                 unsafe_allow_html=True,
             )
             st.markdown("---")
-            st.markdown("### 🛡️ Climate-Smart Resilience Score")
+            st.markdown("### Climate-Smart Resilience Score")
             score = 720
             score_pct = score / 1000 * 100
             st.markdown(
@@ -5166,10 +5068,10 @@ elif app_mode == T["nav_forum"]:
     with col_post:
         with st.container(border=True):
             st.markdown(
-                "<h4 style='color: #a5f28a; margin-bottom: 0;'>✍️ Create a Post</h4>",
+                "<h4 style='color: #a5f28a; margin-bottom: 0;'>Create a Post</h4>",
                 unsafe_allow_html=True,
             )
-            tag = st.selectbox(T["tag_label"], ["🚨 Outbreak Alert", "🌾 Crop Advice", "🚜 Equipment & Inputs", "🛒 Marketplace / Trade"])
+            tag = st.selectbox(T["tag_label"], ["Outbreak Alert", "Crop Advice", "Equipment & Inputs", "Marketplace / Trade"])
             message_text = st.text_area(T["msg_label"], height=120)
             forum_media = st.file_uploader(
                 T["forum_media_label"],
@@ -5258,12 +5160,6 @@ elif app_mode == T["nav_forum"]:
                 -webkit-text-fill-color: #111 !important;
                 text-shadow: none !important;
             }
-            [data-testid="stMain"] [class*="st-key-cg-forum-post-"] {
-                transition: transform .2s ease;
-            }
-            [data-testid="stMain"] [class*="st-key-cg-forum-post-"]:hover {
-                transform: translateY(-2px);
-            }
             .cg-forum-topic-tag {
                 display: inline-block;
                 padding: .2rem .6rem;
@@ -5272,21 +5168,13 @@ elif app_mode == T["nav_forum"]:
                 font-weight: 750;
                 line-height: 1.4;
             }
-            @media (prefers-reduced-motion: reduce) {
-                [data-testid="stMain"] [class*="st-key-cg-forum-post-"] {
-                    transition: none;
-                }
-                [data-testid="stMain"] [class*="st-key-cg-forum-post-"]:hover {
-                    transform: none;
-                }
-            }
             </style>
             """,
             unsafe_allow_html=True,
         )
 
         feed_tab, market_tab = st.tabs(
-            ["📰 Live Community Feed", "📊 Fair Market Prices"]
+            ["Live Community Feed", "Fair Market Prices"]
         )
         with market_tab:
             with st.container(key="cg-market-prices"):
@@ -5340,7 +5228,7 @@ elif app_mode == T["nav_forum"]:
                             <div style="display:flex;align-items:center;justify-content:space-between;
                                 flex-wrap:wrap;gap:.65rem .9rem;">
                               <div style="display:flex;align-items:center;min-width:0;">
-                                <span style="font-size:1.2rem;margin-right:8px;">🧑‍🌾</span>
+                                <span style="font-size:1.2rem;margin-right:8px;"></span>
                                 <strong>{html.escape(str(p_author))}</strong>
                               </div>
                               <div style="display:flex;align-items:center;justify-content:flex-end;
@@ -5462,7 +5350,7 @@ else:
         upload_too_large = False
         assessment = None
         image_quality = {"blocked": True}
-        sample_source_type = "🌱 Verified Farm Field Sample (Log to B2G Surveillance)"
+        sample_source_type = "Verified Farm Field Sample (Log to B2G Surveillance)"
         analyze_triggered = False
 
         if not st.session_state.get("analysis_done", False):
@@ -5534,8 +5422,8 @@ else:
                             sample_source_type = st.radio(
                                 "Select Sample Origin (Telemetry Integrity Check):",
                                 [
-                                    "🌱 Verified Farm Field Sample (Log to B2G Surveillance)",
-                                    "🔬 Reference / Internet Sample (Test Only - Do Not Log)",
+                                    "Verified Farm Field Sample (Log to B2G Surveillance)",
+                                    "Reference / Internet Sample (Test Only - Do Not Log)",
                                 ],
                                 index=0,
                                 key="diagnostic_sample_source",
@@ -5623,7 +5511,7 @@ else:
                         severity_stage=severity_stage,
                     )
                 else:
-                    st.markdown("### 🌱 Farmer-Friendly Summary")
+                    st.markdown("### Farmer-Friendly Summary")
                     st.subheader(raw_label)
                     st.write(f"**{T['crop_context_lbl']}** {chosen_crop}")
                     if st.session_state.get("last_diagnosis_notice"):
@@ -5725,7 +5613,7 @@ else:
                         language,
                     )
 
-            with st.expander("🔬 View Advanced Technical & Model Breakdown", expanded=False):
+            with st.expander("View Advanced Technical & Model Breakdown", expanded=False):
                 st.success(T["analysis_complete_msg"])
                 di.render_log_outcome(st, T, st.session_state.get("last_log_outcome"))
                 if st.session_state.get("last_analysis_error"):
@@ -5772,9 +5660,6 @@ else:
                 st.session_state.pop("_last_upload_digest", None)
                 st.rerun()
 
-        is_active = uploaded_file is not None or st.session_state.get("analysis_done", False)
-        play_state = "paused" if is_active else "running"
-
         st.markdown("""
         <style>
         section.main > div, [data-testid="stSidebar"] > div, .block-container {
@@ -5789,28 +5674,13 @@ else:
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
             z-index: -999;
-            background: linear-gradient(135deg, #0d1f14 0%, #10251a 48%, #121212 100%);
+            background:
+                linear-gradient(rgba(0, 30, 15, 0.7), rgba(0, 15, 5, 0.9)),
+                url("https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=2070&q=80")
+                    center / cover no-repeat,
+                linear-gradient(135deg, #0d1f14 0%, #10251a 48%, #121212 100%);
         }
         
-        .bg-slide {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background-size: cover; background-position: center; background-repeat: no-repeat;
-            opacity: 0; animation-timing-function: ease-in-out; animation-iteration-count: infinite;
-            animation-duration: 40s; animation-play-state: {play_state}; will-change: transform, opacity;
-        }
-        
-        .slide-1 { background-image: linear-gradient(rgba(0, 30, 15, 0.7), rgba(0, 15, 5, 0.9)), url("https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=2070&q=80"); animation-name: fadeSlide1; }
-        .slide-2 { background-image: linear-gradient(rgba(0, 30, 15, 0.7), rgba(0, 15, 5, 0.9)), url("https://images.unsplash.com/photo-1625246333195-78d9c38ad449?auto=format&fit=crop&w=2070&q=80"); animation-name: fadeSlide2; }
-        .slide-3 { background-image: linear-gradient(rgba(0, 30, 15, 0.7), rgba(0, 15, 5, 0.9)), url("https://images.unsplash.com/photo-1550989460-0adf9ea622e2?auto=format&fit=crop&w=2070&q=80"); animation-name: fadeSlide3; }
-        .slide-4 { background-image: linear-gradient(rgba(0, 30, 15, 0.7), rgba(0, 15, 5, 0.9)), url("https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=2070&q=80"); animation-name: fadeSlide4; }
-        .slide-5 { background-image: linear-gradient(rgba(0, 30, 15, 0.7), rgba(0, 15, 5, 0.9)), url("https://images.unsplash.com/photo-1592982537447-7440770cbfc9?auto=format&fit=crop&w=2070&q=80"); animation-name: fadeSlide5; }
-
-        @keyframes fadeSlide1 { 0% { opacity: 1; transform: scale(1); } 16% { opacity: 1; transform: scale(1.03); } 20% { opacity: 0; transform: scale(1.04); } 96% { opacity: 0; transform: scale(1); } 100% { opacity: 1; transform: scale(1); } }
-        @keyframes fadeSlide2 { 0% { opacity: 0; transform: scale(1); } 16% { opacity: 0; transform: scale(1.04); } 20% { opacity: 1; transform: scale(1.04); } 36% { opacity: 1; transform: scale(1.01); } 40% { opacity: 0; transform: scale(1); } 100% { opacity: 0; transform: scale(1); } }
-        @keyframes fadeSlide3 { 0% { opacity: 0; transform: scale(1); } 36% { opacity: 0; transform: scale(1); } 40% { opacity: 1; transform: scale(1); } 56% { opacity: 1; transform: scale(1.03); } 60% { opacity: 0; transform: scale(1.04); } 100% { opacity: 0; transform: scale(1); } }
-        @keyframes fadeSlide4 { 0% { opacity: 0; transform: scale(1); } 56% { opacity: 0; transform: scale(1.04); } 60% { opacity: 1; transform: scale(1.04); } 76% { opacity: 1; transform: scale(1.01); } 80% { opacity: 0; transform: scale(1); } 100% { opacity: 0; transform: scale(1); } }
-        @keyframes fadeSlide5 { 0% { opacity: 0; transform: scale(1); } 76% { opacity: 0; transform: scale(1); } 80% { opacity: 1; transform: scale(1); } 96% { opacity: 1; transform: scale(1.03); } 100% { opacity: 0; transform: scale(1.04); } }
-
         .stApp { background: transparent !important; }
         .main .block-container { background-color: transparent; padding: 2rem 3rem; }
         section[data-testid="stSidebar"] { background: linear-gradient(180deg, rgba(232, 245, 233, 0.9) 0%, rgba(200, 230, 201, 0.9) 100%); }
@@ -5845,11 +5715,9 @@ else:
             background: linear-gradient(135deg, #00897B 0%, #2E7D32 100%);
             color: white; border-radius: 8px; border: none; padding: 0.7rem 2rem;
             font-weight: bold; letter-spacing: 0.5px;
-            transition: all 0.2s ease;
         }
         .stButton>button:hover {
             background: linear-gradient(135deg, #00695C 0%, #1B5E20 100%);
-            transform: translateY(-2px);
         }
         [data-testid="stMetricValue"] {
             color: #A5D6A7 !important; font-weight: 700;
@@ -5867,14 +5735,8 @@ else:
             border: none !important;
         }
         </style>
-        <div class="bg-container">
-            <div class="bg-slide slide-1"></div>
-            <div class="bg-slide slide-2"></div>
-            <div class="bg-slide slide-3"></div>
-            <div class="bg-slide slide-4"></div>
-            <div class="bg-slide slide-5"></div>
-        </div>
-        """.replace("{play_state}", play_state), unsafe_allow_html=True)
+        <div class="bg-container"></div>
+        """, unsafe_allow_html=True)
 
         if analyze_triggered and uploaded_file is not None and image is not None and assessment is not None:
             st.session_state['selected_crop'] = selected_crop
@@ -6388,3 +6250,46 @@ if app_mode == T["nav_ai"]:
     }
     </style>
     """, unsafe_allow_html=True)
+
+st.markdown("""
+<style>
+[data-testid="stMain"] [class*="st-key-financial_market_product_"] [data-testid="stSelectbox"] [role="group"],
+[data-testid="stMain"] [class*="st-key-financial_market_observation_"] [data-testid="stSelectbox"] [role="group"],
+[data-testid="stMain"] [class*="st-key-financial_farm_area_acres"] [data-testid="stNumberInputContainer"],
+[data-testid="stMain"] [class*="st-key-financial_expected_yield_kg_per_acre_"] [data-testid="stNumberInputContainer"],
+[data-testid="stMain"] [class*="st-key-financial_expected_loss_pct_"] [data-testid="stNumberInputContainer"],
+[data-testid="stMain"] [class*="st-key-financial_treatment_cost_kes_"] [data-testid="stNumberInputContainer"] {
+    background-color: #F1F3F5 !important;
+    border: 1px solid #CBD5E1 !important;
+    border-radius: 8px !important;
+    opacity: 1 !important;
+}
+[data-testid="stMain"] [class*="st-key-financial_market_product_"] [data-testid="stSelectbox"] [role="combobox"],
+[data-testid="stMain"] [class*="st-key-financial_market_observation_"] [data-testid="stSelectbox"] [role="combobox"],
+[data-testid="stMain"] [class*="st-key-financial_farm_area_acres"] [data-testid="stNumberInputField"],
+[data-testid="stMain"] [class*="st-key-financial_expected_yield_kg_per_acre_"] [data-testid="stNumberInputField"],
+[data-testid="stMain"] [class*="st-key-financial_expected_loss_pct_"] [data-testid="stNumberInputField"],
+[data-testid="stMain"] [class*="st-key-financial_treatment_cost_kes_"] [data-testid="stNumberInputField"],
+[data-testid="stMain"] [class*="st-key-financial_market_product_"] [data-testid="stSelectbox"] button,
+[data-testid="stMain"] [class*="st-key-financial_market_observation_"] [data-testid="stSelectbox"] button,
+[data-testid="stMain"] [class*="st-key-financial_farm_area_acres"] [data-testid="stNumberInput"] button,
+[data-testid="stMain"] [class*="st-key-financial_expected_yield_kg_per_acre_"] [data-testid="stNumberInput"] button,
+[data-testid="stMain"] [class*="st-key-financial_expected_loss_pct_"] [data-testid="stNumberInput"] button,
+[data-testid="stMain"] [class*="st-key-financial_treatment_cost_kes_"] [data-testid="stNumberInput"] button {
+    color: #111827 !important;
+    -webkit-text-fill-color: #111827 !important;
+    text-shadow: none !important;
+    opacity: 1 !important;
+}
+[data-testid="stMain"] [class*="st-key-financial_market_product_"] [data-testid="stSelectbox"] svg,
+[data-testid="stMain"] [class*="st-key-financial_market_observation_"] [data-testid="stSelectbox"] svg,
+[data-testid="stMain"] [class*="st-key-financial_farm_area_acres"] [data-testid="stNumberInput"] svg,
+[data-testid="stMain"] [class*="st-key-financial_expected_yield_kg_per_acre_"] [data-testid="stNumberInput"] svg,
+[data-testid="stMain"] [class*="st-key-financial_expected_loss_pct_"] [data-testid="stNumberInput"] svg,
+[data-testid="stMain"] [class*="st-key-financial_treatment_cost_kes_"] [data-testid="stNumberInput"] svg {
+    fill: #111827 !important;
+    color: #111827 !important;
+    opacity: 1 !important;
+}
+</style>
+""", unsafe_allow_html=True)
