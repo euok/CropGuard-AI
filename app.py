@@ -37,23 +37,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-def _google_oidc_is_configured():
-    try:
-        auth_config = st.secrets["auth"]
-        google_config = auth_config["google"]
-        return all((
-            auth_config["redirect_uri"],
-            auth_config["cookie_secret"],
-            google_config["client_id"],
-            google_config["client_secret"],
-            google_config["server_metadata_url"],
-        ))
-    except (AttributeError, FileNotFoundError, KeyError, TypeError):
-        return False
-
-
-google_user = st.user
-if not google_user.get("is_logged_in", False):
+if not st.session_state.get("email_login_authenticated", False):
     st.markdown(
         """
         <style>
@@ -179,40 +163,6 @@ if not google_user.get("is_logged_in", False):
             font-weight: 700;
             white-space: nowrap;
         }
-        .st-key-cg-google-login button {
-            width: 100%;
-            min-height: 3.15rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: .7rem;
-            background: #fff !important;
-            color: #303134 !important;
-            border: 1px solid #dadce0 !important;
-            border-radius: 8px !important;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, .18) !important;
-            font-size: 1rem !important;
-            font-weight: 600 !important;
-            text-shadow: none !important;
-        }
-        .st-key-cg-google-login button::before {
-            content: "";
-            width: 22px;
-            height: 22px;
-            flex: 0 0 22px;
-            background-repeat: no-repeat;
-            background-position: center;
-            background-size: contain;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath fill='%23EA4335' d='M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z'/%3E%3Cpath fill='%234285F4' d='M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.76 7.18l7.73 6C44.42 37.96 46.98 31.86 46.98 24.55z'/%3E%3Cpath fill='%23FBBC05' d='M10.53 28.59A14.4 14.4 0 0 1 9.75 24c0-1.59.27-3.13.76-4.59l-7.98-6.19A23.9 23.9 0 0 0 0 24c0 3.87.93 7.54 2.56 10.78l7.97-6.19z'/%3E%3Cpath fill='%2334A853' d='M24 48c6.48 0 11.93-2.13 15.91-5.8l-7.73-6c-2.15 1.45-4.92 2.3-8.18 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z'/%3E%3C/svg%3E");
-        }
-        .st-key-cg-google-login button:hover {
-            background: #f8faff !important;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, .22) !important;
-        }
-        .st-key-cg-google-login button p {
-            color: #303134 !important;
-            text-shadow: none !important;
-        }
         .st-key-cg-login-card [data-testid="stAlert"] {
             text-align: left;
         }
@@ -300,19 +250,29 @@ if not google_user.get("is_logged_in", False):
             "Sign in to access your farm dashboard and scan history.</p>",
             unsafe_allow_html=True,
         )
-        if _google_oidc_is_configured():
-            with st.container(key="cg-google-login"):
-                if st.button(
-                    "Continue with Google",
-                    key="google_oidc_login",
-                    use_container_width=True,
-                ):
-                    st.login("google")
-        else:
-            st.error(
-                "Google sign-in is not configured. Add the OAuth settings to "
-                "`.streamlit/secrets.toml` and register this app's redirect URI in Google Cloud."
+        with st.form("email_login_form"):
+            email_input = st.text_input(
+                "Email address",
+                placeholder="you@example.com",
+                key="email_login_input",
+            ).strip().lower()
+            email_submitted = st.form_submit_button(
+                "Continue with email",
+                use_container_width=True,
             )
+        if email_submitted:
+            if not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", email_input):
+                st.error("Enter a valid email address.")
+            else:
+                st.session_state["email_login_authenticated"] = True
+                st.session_state["user_email"] = email_input
+                st.session_state["user_display_name"] = (
+                    email_input.split("@", maxsplit=1)[0]
+                    .replace(".", " ")
+                    .replace("_", " ")
+                    .title()
+                )
+                st.rerun()
         st.markdown(
             '<div class="cg-impact-ticker" role="status">'
             '<span><strong>Network status:</strong> 5,403 registered farmers · '
@@ -326,27 +286,19 @@ if not google_user.get("is_logged_in", False):
         )
     st.stop()
 
-google_email = str(google_user.get("email", "")).strip()
-if not google_email:
-    st.error("Google sign-in did not provide an email address. Contact the administrator.")
-    st.stop()
-google_name = str(google_user.get("name") or google_email).strip()
-st.session_state["user_email"] = google_email
-st.session_state["user_display_name"] = google_name
-
-def _require_verified_oauth_email():
-    if not st.user.get("is_logged_in", False):
-        raise PermissionError("A verified Google OAuth session is required.")
+def _require_email_login():
+    if not st.session_state.get("email_login_authenticated", False):
+        raise PermissionError("An email login is required.")
     email = st.session_state.get("user_email")
-    if not email or email != google_email:
-        raise PermissionError("The verified Google OAuth identity is unavailable.")
+    if not email or email != email.strip().lower():
+        raise PermissionError("The email login identity is unavailable.")
     return email
 
 def _require_authenticated_user_id():
-    _require_verified_oauth_email()
+    _require_email_login()
     user_id = st.session_state.get("logged_in_user_id")
     if type(user_id) is not int or user_id <= 0:
-        raise PermissionError("The verified Google OAuth account is not initialized.")
+        raise PermissionError("The email account is not initialized.")
     return user_id
 
 # --- EXHAUSTIVE MULTILINGUAL TRANSLATION DICTIONARY ---
@@ -373,10 +325,10 @@ TRANSLATIONS = {
         "phytosanitary_feed": "National Epidemiological Surveillance Feed",
         "gps_btn_label": "Auto-Detect GPS",
         "acc_title": "Farmer Account & Secure Farm History",
-        "acc_subtitle": "Manage your Google OAuth account and review your complete, persistent agronomic scan history.",
+        "acc_subtitle": "Manage your email account and review your complete, persistent agronomic scan history.",
         "profile_header": "Active Account Profile",
-        "login_prompt": "Please sign in with your Google account to access and track your persistent farm history across sessions.",
-        "login_btn": "Sign In with Google",
+        "login_prompt": "Enter your email address to access and track your persistent farm history across sessions.",
+        "login_btn": "Continue with email",
         "logout_btn": "Log Out",
         "history_header": "Persistent Farm Scan History",
         "history_info": "All field scans and disease severity scores performed under your account are securely preserved here across sessions.",
@@ -487,7 +439,7 @@ TRANSLATIONS = {
         "phytosanitary_feed": "Mtiririko wa Kitaifa wa Ufuatiliaji wa Magonjwa",
         "gps_btn_label": "Tafuta GPS",
         "acc_title": "Akaunti ya Mkulima & Historia Salama ya Shamba",
-        "acc_subtitle": "Dhibiti akaunti yako ya Google OAuth na ukague historia yako kamili ya uchunguzi wa shamba.",
+        "acc_subtitle": "Dhibiti akaunti yako ya barua pepe na ukague historia yako kamili ya uchunguzi wa shamba.",
         "profile_header": "Profaili ya Akaunti",
         "login_prompt": "Tafadhali ingia ukitumia akaunti yako ya Google ili kufikia na kufuatilia historia ya shamba lako.",
         "login_btn": "Ingia na Google",
@@ -805,7 +757,7 @@ for _lang, _msgs in EPI_TEXT.items():
 for _lang, _msgs in di.INTEGRITY_TEXT.items():
     if _lang in TRANSLATIONS:
         TRANSLATIONS[_lang].update(_msgs)
-_require_verified_oauth_email()
+_require_email_login()
 di.init_registry()
 
 GPS_AUTO_ON_LOAD = True
@@ -815,7 +767,7 @@ GPS_MAX_HUB_KM = 1000
 # --- B2G EPIDEMIOLOGICAL & FARMER HISTORY DATABASE ---
 @serialized_database_write
 def init_epidemiological_db():
-    _require_verified_oauth_email()
+    _require_email_login()
     conn = connect_database(EPI_DB_PATH)
     cursor = conn.cursor()
     
@@ -1057,7 +1009,7 @@ def _epi_apply_label_rule(conn, only_unset=True):
 
 @serialized_database_write
 def ensure_epi_schema():
-    _require_verified_oauth_email()
+    _require_email_login()
     conn = _epi_conn()
     try:
         have = {r[1] for r in conn.execute("PRAGMA table_info(scan_telemetry)")}
@@ -1146,7 +1098,7 @@ def log_scan_telemetry(hub_region, target_crop, disease_name, confidence, severi
 
 @serialized_database_write
 def evaluate_outbreak_cluster(hub_region, disease_name, now=None):
-    _require_verified_oauth_email()
+    _require_email_login()
     if hub_region == GPS_FALLBACK_HUB or _epi_norm(disease_name) == "healthy":
         return False
     now = now or datetime.now()
@@ -1463,9 +1415,9 @@ def _epi_bootstrap():
 _epi_bootstrap()
 
 @serialized_database_write
-def sync_google_user_profile(email, display_name):
-    if email != _require_verified_oauth_email():
-        raise PermissionError("Cannot update a profile for a different OAuth identity.")
+def sync_email_user_profile(email, display_name):
+    if email != _require_email_login():
+        raise PermissionError("Cannot update a profile for a different email identity.")
     conn = _epi_conn()
     try:
         cursor = conn.cursor()
@@ -1474,8 +1426,8 @@ def sync_google_user_profile(email, display_name):
         if user_row:
             user_id = user_row[0]
             cursor.execute(
-                "UPDATE users SET display_name = ? WHERE user_id = ?",
-                (display_name, user_id),
+                "UPDATE users SET account_type = ?, display_name = ? WHERE user_id = ?",
+                ("Email", display_name, user_id),
             )
         else:
             cursor.execute(
@@ -1483,7 +1435,7 @@ def sync_google_user_profile(email, display_name):
                 INSERT INTO users (account_type, identifier, display_name, created_at)
                 VALUES (?, ?, ?, ?)
                 """,
-                ("Google", email, display_name, datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
+                ("Email", email, display_name, datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
             )
             user_id = cursor.lastrowid
         conn.commit()
@@ -1492,11 +1444,11 @@ def sync_google_user_profile(email, display_name):
         conn.close()
 
 
-st.session_state["logged_in_user_id"] = sync_google_user_profile(
-    google_email,
-    google_name,
+st.session_state["logged_in_user_id"] = sync_email_user_profile(
+    st.session_state["user_email"],
+    st.session_state["user_display_name"],
 )
-st.session_state["user_identifier"] = google_email
+st.session_state["user_identifier"] = st.session_state["user_email"]
 
 if 'selected_hub_label' not in st.session_state:
     st.session_state['selected_hub_label'] = "Kisii, Kenya (Highland Zone)"
@@ -3227,8 +3179,17 @@ st.sidebar.markdown(
     '</div>',
     unsafe_allow_html=True,
 )
-if st.sidebar.button("Log out", key="google_oidc_logout", use_container_width=True):
-    st.logout()
+if st.sidebar.button("Log out", key="email_login_logout", use_container_width=True):
+    for key in (
+        "email_login_authenticated",
+        "email_login_input",
+        "user_email",
+        "user_display_name",
+        "logged_in_user_id",
+        "user_identifier",
+    ):
+        st.session_state.pop(key, None)
+    st.rerun()
 st.sidebar.markdown("---")
 
 # 2. Primary Navigation
@@ -6041,6 +6002,7 @@ else:
             st.session_state['last_disease_guide'] = diagnosis_guide_key
             consensus_data = st.session_state.get("last_consensus_report") or {}
             vision_data = consensus_data.get("vision") or {}
+            gap_assessment = st.session_state.get("last_gemini_gap_assessment") or {}
             if not is_healthy_prediction:
                 advisory_diagnosis = (
                     vision_data.get("primary_diagnosis")
@@ -6048,13 +6010,12 @@ else:
                     and vision_data.get("confidence_score", 0) > 0
                     and vision_data.get("primary_diagnosis", "").casefold()
                     not in {"", "uncertain", "unknown", "not sure"}
-                    else st.session_state.get("last_gemini_gap_assessment", {}).get(
-                        "assessment"
-                    ) or consensus_data.get("primary_diagnosis", predicted_label)
+                    else gap_assessment.get("assessment")
+                    or consensus_data.get("primary_diagnosis", predicted_label)
                 )
                 advisory_symptoms = (
                     vision_data.get("visual_symptoms")
-                    or st.session_state.get("last_gemini_gap_assessment", {}).get("observations")
+                    or gap_assessment.get("observations")
                     or []
                 )
                 try:
